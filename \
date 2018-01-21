@@ -3,8 +3,6 @@
   - decide the number of dimensions in array
   - use as optimised code as possible
   - create useful, clear and extendable interfaces
-  - two versions, a lightweight one and exception safe, extended one
-  - accessing the elements provided by overloading [] operator
 
 # Random thoughts 
   what about the usage of std::byte from C++17?
