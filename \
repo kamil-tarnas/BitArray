@@ -1,8 +1,0 @@
-# Basic requirements
-  - must have elastic number of bits for each entry
-  - decide the number of dimensions in array
-  - use as optimised code as possible
-  - create useful, clear and extendable interfaces
-
-# Random thoughts 
-  what about the usage of std::byte from C++17?
