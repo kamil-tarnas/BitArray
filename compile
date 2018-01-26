@@ -1,0 +1,4 @@
+#g++ BitArray.h BitArray_utils.h BitArray_dynamic.h BitArray_static.h BitArray_test.cpp  -std=c++11 -I $$GTEST_HOME/include -L $$GTEST_HOME/lib -lgtest -lgtest_main -lpthread
+
+
+g++ BitArray.h  BitArray_test.cpp  -std=c++11 -o test -I $$GTEST_HOME/include -L $$GTEST_HOME/lib -lgtest -lgtest_main -lpthread
