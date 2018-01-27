@@ -36,7 +36,7 @@ BitArray<sizeOfArray, sizeOfElement, false>::~BitArray()
 
 
 template<unsigned sizeOfArray, unsigned sizeOfElement>
-BitArray<sizeOfArray, sizeOfElement, false>::BitArray() : data()
+BitArray<sizeOfArray, sizeOfElement, false>::BitArray()
 {
 }
 
