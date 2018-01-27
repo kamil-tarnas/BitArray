@@ -28,6 +28,19 @@ private:
 	unsigned data[CaculateInternalArraySize(sizeOfArray, sizeOfElement)];
 };
 
+
+template<unsigned sizeOfArray, unsigned sizeOfElement>
+BitArray<sizeOfArray, sizeOfElement, false>::~BitArray()
+{
+}
+
+
+template<unsigned sizeOfArray, unsigned sizeOfElement>
+BitArray<sizeOfArray, sizeOfElement, false>::BitArray() : data()
+{
+}
+
+
 template<unsigned sizeOfArray, unsigned sizeOfElement>
 unsigned BitArray<sizeOfArray, sizeOfElement, false>::Get(unsigned position)
 {
@@ -45,13 +58,18 @@ unsigned BitArray<sizeOfArray, sizeOfElement, false>::Get(unsigned position)
 	//Relative position of entry in certain word, starting from zero, given in entries
 	const unsigned entryOffsetInWord = position - (wordPositionInArray * amountOfEntriesPerWord);
 
+	//Get the padding value
+	const unsigned paddingBits = (sizeof(unsigned) * CHAR_BITS) -
+								 (sizeOfElement * amountOfEntriesPerWord);
+
 	/*
 	 * Getting the value of entry
 	 * Could it be optimized when indexing starts from least significant bits?
 	 */
 
 	//Bits to shift depend on element index and bitsPerEnty value, there is max shift to right in U32 word
-	const unsigned bitsToShift = (amountOfEntriesPerWord - 1 - entryOffsetInWord) * sizeOfElement;
+	const unsigned bitsToShift = ((amountOfEntriesPerWord - 1 - entryOffsetInWord) * sizeOfElement)
+								   + paddingBits;
 
 	//Return the bits of entry, they are located starting from MSB, so shifting right is required
 	//Mask for returned bits, bits that are not the part of entry will be cleared
@@ -76,6 +94,10 @@ void BitArray<sizeOfArray, sizeOfElement, false>::Set(unsigned position, unsigne
 	//Relative position of entry in certain word, starting from zero, given in entries
 	const unsigned entryOffsetInWord = position - (wordPositionInArray * amountOfEntriesPerWord);
 
+	//Get the padding value
+	const unsigned paddingBits = (sizeof(unsigned) * CHAR_BITS) -
+								 (sizeOfElement * amountOfEntriesPerWord);
+
 	/*
 	 * Setting the value of entry
 	 */
@@ -85,7 +107,7 @@ void BitArray<sizeOfArray, sizeOfElement, false>::Set(unsigned position, unsigne
 	value &= (unsigned)(2 ^ sizeOfElement - 1);
 
 	//Get bits in value to be set in the right place in word
-	value <<= sizeOfElement * (amountOfEntriesPerWord - 1 - wordPositionInArray);
+	value <<= (sizeOfElement * (amountOfEntriesPerWord - 1 - entryOffsetInWord) + paddingBits);
 
 	//Clear the bits corresponding to occupied in new entry in "data" array
 	data[wordPositionInArray] &= ~(((2 ^ sizeOfElement - 1) << sizeOfElement));
@@ -93,16 +115,6 @@ void BitArray<sizeOfArray, sizeOfElement, false>::Set(unsigned position, unsigne
 	//Make bitwise "or" operation to merge bits of value moved to the right place
 	//with the rest of bits of word, that won't be modified
 	data[wordPositionInArray] |= value;
-}
-
-template<unsigned sizeOfArray, unsigned sizeOfElement>
-BitArray<sizeOfArray, sizeOfElement, false>::~BitArray()
-{
-}
-
-template<unsigned sizeOfArray, unsigned sizeOfElement>
-BitArray<sizeOfArray, sizeOfElement, false>::BitArray()
-{
 }
 
 #endif //#ifndef BIT_ARRAY_STATIC
