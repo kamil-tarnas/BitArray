@@ -31,8 +31,68 @@ private:
 template<unsigned sizeOfArray, unsigned sizeOfElement>
 unsigned BitArray<sizeOfArray, sizeOfElement, false>::Get(unsigned position)
 {
-	//TODO: Write!
-	return 5;
+	/*
+	 * Probably these computations could be put in separate inline function, as they will
+	 * be calculated many times in many different functions
+	 */
+
+	//The number of entries in word, in one element of "data" member variable array
+	const unsigned amountOfEntriesPerWord = (sizeof(unsigned) * CHAR_BITS) / sizeOfElement;
+
+	//The position of word containing entry in "data" member variable
+	const unsigned wordPositionInArray = position / amountOfEntriesPerWord;
+
+	//Relative position of entry in certain word, starting from zero, given in entries
+	const unsigned entryOffsetInWord = position - (wordPositionInArray * amountOfEntriesPerWord);
+
+	/*
+	 * Getting the value of entry
+	 * Could it be optimized when indexing starts from least significant bits?
+	 */
+
+	//Bits to shift depend on element index and bitsPerEnty value, there is max shift to right in U32 word
+	const unsigned bitsToShift = (amountOfEntriesPerWord - 1 - entryOffsetInWord) * sizeOfElement;
+
+	//Return the bits of entry, they are located starting from MSB, so shifting right is required
+	//Mask for returned bits, bits that are not the part of entry will be cleared
+	//TODO: Measure bit shift versus ^ operator performance
+	return data[wordPositionInArray] >> bitsToShift & (unsigned)(2 ^ sizeOfElement - 1);
+}
+
+template<unsigned sizeOfArray, unsigned sizeOfElement>
+void BitArray<sizeOfArray, sizeOfElement, false>::Set(unsigned position, unsigned value)
+{
+	/*
+	 * Probably these computations could be put in separate inline function, as they will
+	 * be calculated many times in many different functions
+	 */
+
+	//The number of entries in word, in one element of "data" member variable array
+	const unsigned amountOfEntriesPerWord = (sizeof(unsigned) * CHAR_BITS) / sizeOfElement;
+
+	//The position of word containing entry in "data" member variable
+	const unsigned wordPositionInArray = position / amountOfEntriesPerWord;
+
+	//Relative position of entry in certain word, starting from zero, given in entries
+	const unsigned entryOffsetInWord = position - (wordPositionInArray * amountOfEntriesPerWord);
+
+	/*
+	 * Setting the value of entry
+	 */
+
+	//Truncate the bits of value which are at greater positions than sizeOfElemet -1
+	//This ensures that we will not overwrite value of another entries
+	value &= (unsigned)(2 ^ sizeOfElement - 1);
+
+	//Get bits in value to be set in the right place in word
+	value <<= sizeOfElement * (amountOfEntriesPerWord - 1 - wordPositionInArray);
+
+	//Clear the bits corresponding to occupied in new entry in "data" array
+	data[wordPositionInArray] &= ~(((2 ^ sizeOfElement - 1) << sizeOfElement));
+
+	//Make bitwise "or" operation to merge bits of value moved to the right place
+	//with the rest of bits of word, that won't be modified
+	data[wordPositionInArray] |= value;
 }
 
 template<unsigned sizeOfArray, unsigned sizeOfElement>

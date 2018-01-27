@@ -11,8 +11,16 @@ TEST_F(BitArrayTest, DummyTest)
 {
 	BitArray<4, 5, false> bitArray;
 	(void)bitArray;
-	int cos = bitArray.Get(2);
-	ASSERT_EQ(5, cos);
+
+	for (int i = 0; i < 4; ++i)
+	{
+		bitArray.Set(i, i * 2);
+	}
+
+	for (int i = 0; i < 4; ++i)
+	{
+		EXPECT_EQ(i * 2, bitArray.Get(i));
+	}
 }
 
 int main(int argc, char** argv)

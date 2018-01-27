@@ -4,7 +4,7 @@
 //TODO: Temporary, remove after including proper header
 #define CHAR_BITS 8
 
-constexpr unsigned CaculateInternalArraySize(unsigned sizeOfArray, unsigned sizeOfElement)
+constexpr unsigned CaculateInternalArraySize(unsigned sizeOfArray, unsigned sizeOfElement) noexcept
 {
 	return (((sizeOfArray * sizeOfElement) +
 		     (sizeof(unsigned) * CHAR_BITS) - 1) /
