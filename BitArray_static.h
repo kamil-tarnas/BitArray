@@ -74,7 +74,7 @@ unsigned BitArray<sizeOfArray, sizeOfElement, false>::Get(unsigned position)
 	//Return the bits of entry, they are located starting from MSB, so shifting right is required
 	//Mask for returned bits, bits that are not the part of entry will be cleared
 	//TODO: Measure bit shift versus ^ operator performance
-	return data[wordPositionInArray] >> bitsToShift & (unsigned)(2 ^ sizeOfElement - 1);
+	return data[wordPositionInArray] >> bitsToShift & (unsigned)((1U << sizeOfElement) - 1);
 }
 
 template<unsigned sizeOfArray, unsigned sizeOfElement>
@@ -104,14 +104,17 @@ void BitArray<sizeOfArray, sizeOfElement, false>::Set(unsigned position, unsigne
 
 	//Truncate the bits of value which are at greater positions than sizeOfElemet -1
 	//This ensures that we will not overwrite value of another entries
-	value &= (unsigned)(2 ^ sizeOfElement - 1);
+
+	unsigned mask = (unsigned)((1U << sizeOfElement) - 1);
+
+	value &= (unsigned)((1U << sizeOfElement) - 1);
 
 	//Get bits in value to be set in the right place in word
 	value <<= (sizeOfElement * (amountOfEntriesPerWord - 1 - entryOffsetInWord) + paddingBits);
 
 	//Clear the bits corresponding to occupied in new entry in "data" array
-	data[wordPositionInArray] &= ~(((2 ^ sizeOfElement - 1) <<
-			(sizeOfElement * (amountOfEntriesPerWord - 1 - entryOffsetInWord) + paddingBits)));
+	data[wordPositionInArray] &= ~(((1U << sizeOfElement) - 1) <<
+			(sizeOfElement * (amountOfEntriesPerWord - 1 - entryOffsetInWord) + paddingBits));
 
 	//Make bitwise "or" operation to merge bits of value moved to the right place
 	//with the rest of bits of word, that won't be modified
