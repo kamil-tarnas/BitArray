@@ -30,13 +30,13 @@ private:
 
 
 template<unsigned sizeOfArray, unsigned sizeOfElement>
-BitArray<sizeOfArray, sizeOfElement, false>::~BitArray()
+BitArray<sizeOfArray, sizeOfElement, false>::BitArray()
 {
 }
 
 
 template<unsigned sizeOfArray, unsigned sizeOfElement>
-BitArray<sizeOfArray, sizeOfElement, false>::BitArray()
+BitArray<sizeOfArray, sizeOfElement, false>::~BitArray()
 {
 }
 
@@ -110,7 +110,8 @@ void BitArray<sizeOfArray, sizeOfElement, false>::Set(unsigned position, unsigne
 	value <<= (sizeOfElement * (amountOfEntriesPerWord - 1 - entryOffsetInWord) + paddingBits);
 
 	//Clear the bits corresponding to occupied in new entry in "data" array
-	data[wordPositionInArray] &= ~(((2 ^ sizeOfElement - 1) << sizeOfElement));
+	data[wordPositionInArray] &= ~(((2 ^ sizeOfElement - 1) <<
+			(sizeOfElement * (amountOfEntriesPerWord - 1 - entryOffsetInWord) + paddingBits)));
 
 	//Make bitwise "or" operation to merge bits of value moved to the right place
 	//with the rest of bits of word, that won't be modified
