@@ -50,7 +50,7 @@ unsigned BitArray<sizeOfArray, sizeOfElement, false>::Get(unsigned position)
 	 */
 
 	//The number of entries in word, in one element of "data" member variable array
-	const unsigned amountOfEntriesPerWord = (sizeof(unsigned) * CHAR_BITS) / sizeOfElement;
+	constexpr unsigned amountOfEntriesPerWord = (sizeof(unsigned) * CHAR_BITS) / sizeOfElement;
 
 	//The position of word containing entry in "data" member variable
 	const unsigned wordPositionInArray = position / amountOfEntriesPerWord;
@@ -59,7 +59,7 @@ unsigned BitArray<sizeOfArray, sizeOfElement, false>::Get(unsigned position)
 	const unsigned entryOffsetInWord = position - (wordPositionInArray * amountOfEntriesPerWord);
 
 	//Get the padding value
-	const unsigned paddingBits = (sizeof(unsigned) * CHAR_BITS) -
+	constexpr unsigned paddingBits = (sizeof(unsigned) * CHAR_BITS) -
 								 (sizeOfElement * amountOfEntriesPerWord);
 
 	/*
@@ -86,7 +86,7 @@ void BitArray<sizeOfArray, sizeOfElement, false>::Set(unsigned position, unsigne
 	 */
 
 	//The number of entries in word, in one element of "data" member variable array
-	const unsigned amountOfEntriesPerWord = (sizeof(unsigned) * CHAR_BITS) / sizeOfElement;
+	constexpr unsigned amountOfEntriesPerWord = (sizeof(unsigned) * CHAR_BITS) / sizeOfElement;
 
 	//The position of word containing entry in "data" member variable
 	const unsigned wordPositionInArray = position / amountOfEntriesPerWord;
@@ -95,7 +95,7 @@ void BitArray<sizeOfArray, sizeOfElement, false>::Set(unsigned position, unsigne
 	const unsigned entryOffsetInWord = position - (wordPositionInArray * amountOfEntriesPerWord);
 
 	//Get the padding value
-	const unsigned paddingBits = (sizeof(unsigned) * CHAR_BITS) -
+	constexpr unsigned paddingBits = (sizeof(unsigned) * CHAR_BITS) -
 								 (sizeOfElement * amountOfEntriesPerWord);
 
 	/*
@@ -105,7 +105,7 @@ void BitArray<sizeOfArray, sizeOfElement, false>::Set(unsigned position, unsigne
 	//Truncate the bits of value which are at greater positions than sizeOfElemet -1
 	//This ensures that we will not overwrite value of another entries
 
-	unsigned mask = (unsigned)((1U << sizeOfElement) - 1);
+	constexpr unsigned mask = ((1U << sizeOfElement) - 1);
 
 	value &= (unsigned)((1U << sizeOfElement) - 1);
 
