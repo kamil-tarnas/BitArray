@@ -12,7 +12,7 @@ constexpr unsigned CaculateInternalArraySize(unsigned sizeOfArray, unsigned size
 }
 
 //TODO: Size of array is needed, size in bits of element is needed
-template<unsigned sizeOfArray, unsigned sizeOfElement, bool manualStorage>
+template<unsigned ...>
 class BitArray
 {
 	//No need to implement this, all cases are covered by template specializations

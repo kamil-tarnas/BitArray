@@ -5,16 +5,19 @@
 //in run-time, there is no need to generate code for every occurrence of different size template
 //argument value
 
+/*
+ * This must be done in run-time if we want to decide the size of array at the run-time
+ */
+
 //Internal manual storage member variable
 //Template partial specialization for internal data_p manual storage BitArray instances
-template<unsigned sizeOfArray, unsigned sizeOfElement>
-class BitArray<sizeOfArray, sizeOfElement, true>
+template<>
+class BitArray<>
 {
 public:
-	BitArray();
-	BitArray(const BitArray<sizeOfArray, sizeOfElement, false>&);
-	BitArray<sizeOfArray, sizeOfElement, false>&
-		operator=(const BitArray<sizeOfArray, sizeOfElement, false>&);
+	BitArray(unsigned sizeOfArray, unsigned sizeOfElement);
+	BitArray(const BitArray<>&);
+	BitArray<>& operator=(const BitArray<>&);
 	~BitArray();
 
 	unsigned Get(unsigned position);
@@ -26,25 +29,27 @@ public:
 protected:
 private:
 	unsigned* data_p;
+	unsigned sizeOfArray;
+	unsigned sizeOfElement;
 };
 
 
-template<unsigned sizeOfArray, unsigned sizeOfElement>
-BitArray<sizeOfArray, sizeOfElement, true>::BitArray() : data_p(nullptr)
+BitArray<>::BitArray(unsigned sizeOfArray, unsigned sizeOfElement) :
+				   data_p(nullptr),
+				   sizeOfArray(sizeOfArray),
+				   sizeOfElement(sizeOfElement)
 {
 	data_p = new unsigned[sizeOfArray];
 }
 
 
-template<unsigned sizeOfArray, unsigned sizeOfElement>
-BitArray<sizeOfArray, sizeOfElement, true>::~BitArray()
+BitArray<>::~BitArray()
 {
 	delete data_p;
 }
 
 
-template<unsigned sizeOfArray, unsigned sizeOfElement>
-unsigned BitArray<sizeOfArray, sizeOfElement, true>::Get(unsigned position)
+unsigned BitArray<>::Get(unsigned position)
 {
 	/*
 	 * Probably these computations could be put in separate inline function, as they will
@@ -79,8 +84,8 @@ unsigned BitArray<sizeOfArray, sizeOfElement, true>::Get(unsigned position)
 	return data_p[wordPositionInArray] >> bitsToShift & (unsigned)((1U << sizeOfElement) - 1);
 }
 
-template<unsigned sizeOfArray, unsigned sizeOfElement>
-void BitArray<sizeOfArray, sizeOfElement, true>::Set(unsigned position, unsigned value)
+
+void BitArray<>::Set(unsigned position, unsigned value)
 {
 	/*
 	 * Probably these computations could be put in separate inline function, as they will

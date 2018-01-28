@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "BitArray.h"
+//#include "BitArray.h"
 
 
 int main(int argc, char** argv)

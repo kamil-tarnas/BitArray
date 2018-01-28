@@ -4,13 +4,13 @@
 //Internal automatic storage member variable
 //Template partial specialization for internal data automatic storage BitArray instances
 template<unsigned sizeOfArray, unsigned sizeOfElement>
-class BitArray<sizeOfArray, sizeOfElement, false>
+class BitArray<sizeOfArray, sizeOfElement>
 {
 public:
 	BitArray();
-	BitArray(const BitArray<sizeOfArray, sizeOfElement, false>&);
-	BitArray<sizeOfArray, sizeOfElement, false>&
-		operator=(const BitArray<sizeOfArray, sizeOfElement, false>&);
+	BitArray(const BitArray<sizeOfArray, sizeOfElement>&);
+	BitArray<sizeOfArray, sizeOfElement>&
+		operator=(const BitArray<sizeOfArray, sizeOfElement>&);
 	~BitArray();
 
 	unsigned Get(unsigned position);
@@ -30,19 +30,19 @@ private:
 
 
 template<unsigned sizeOfArray, unsigned sizeOfElement>
-BitArray<sizeOfArray, sizeOfElement, false>::BitArray()
+BitArray<sizeOfArray, sizeOfElement>::BitArray()
 {
 }
 
 
 template<unsigned sizeOfArray, unsigned sizeOfElement>
-BitArray<sizeOfArray, sizeOfElement, false>::~BitArray()
+BitArray<sizeOfArray, sizeOfElement>::~BitArray()
 {
 }
 
 
 template<unsigned sizeOfArray, unsigned sizeOfElement>
-unsigned BitArray<sizeOfArray, sizeOfElement, false>::Get(unsigned position)
+unsigned BitArray<sizeOfArray, sizeOfElement>::Get(unsigned position)
 {
 	/*
 	 * Probably these computations could be put in separate inline function, as they will
@@ -78,7 +78,7 @@ unsigned BitArray<sizeOfArray, sizeOfElement, false>::Get(unsigned position)
 }
 
 template<unsigned sizeOfArray, unsigned sizeOfElement>
-void BitArray<sizeOfArray, sizeOfElement, false>::Set(unsigned position, unsigned value)
+void BitArray<sizeOfArray, sizeOfElement>::Set(unsigned position, unsigned value)
 {
 	/*
 	 * Probably these computations could be put in separate inline function, as they will

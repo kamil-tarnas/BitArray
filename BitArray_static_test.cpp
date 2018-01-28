@@ -1,5 +1,7 @@
 #include <gtest/gtest.h>
-#include "BitArray.h"
+//#include "BitArray.h"
+#include "BitArray_utils.h"
+#include "BitArray_static.h"
 
 //Remove if will be not necessary
 #include <iostream>
@@ -12,7 +14,7 @@ class BitArray_static_test : public testing::Test
 
 TEST_F(BitArray_static_test, DummyTest_static)
 {
-	BitArray<4, 5, false> bitArray;
+	BitArray<4, 5> bitArray;
 
 	(void)bitArray;
 
@@ -35,7 +37,7 @@ TEST_F(BitArray_static_test, DummyTest_static)
 
 	//One bit per element
 	{
-		BitArray<100, 1, false> bitArray;
+		BitArray<100, 1> bitArray;
 
 		for (unsigned i = 0; i < numberOfArrayElements; ++i)
 		{
@@ -60,7 +62,7 @@ TEST_F(BitArray_static_test, Setting_and_getting_not_power_of_two_bits_1_3)
 	//Smashing stack? Why {} does not control the lifetime of objects?
 	//One bit per element
 	{
-		BitArray<numberOfArrayElements, 1, false> bitArray;
+		BitArray<numberOfArrayElements, 1> bitArray;
 
 		for (int i = 0; i < numberOfArrayElements; ++i)
 		{
@@ -75,7 +77,7 @@ TEST_F(BitArray_static_test, Setting_and_getting_not_power_of_two_bits_1_3)
 
 	//Three bits per element
 	{
-		BitArray<numberOfArrayElements, 3, false> bitArray;
+		BitArray<numberOfArrayElements, 3> bitArray;
 
 		for (int i = 0; i < numberOfArrayElements; ++i)
 		{
@@ -96,7 +98,7 @@ TEST_F(BitArray_static_test, Setting_and_getting_not_power_of_two_bits_5_13)
 	constexpr unsigned numberOfArrayElements = 20;
 	//Five bits per element
 	{
-		BitArray<numberOfArrayElements, 5, false> bitArray;
+		BitArray<numberOfArrayElements, 5> bitArray;
 
 		for (int i = 0; i < numberOfArrayElements; ++i)
 		{
@@ -111,7 +113,7 @@ TEST_F(BitArray_static_test, Setting_and_getting_not_power_of_two_bits_5_13)
 
 	//Seven bits per element
 	{
-		BitArray<numberOfArrayElements, 7, false> bitArray;
+		BitArray<numberOfArrayElements, 7> bitArray;
 
 		for (int i = 0; i < numberOfArrayElements; ++i)
 		{
@@ -126,7 +128,7 @@ TEST_F(BitArray_static_test, Setting_and_getting_not_power_of_two_bits_5_13)
 
 	//Nine bits per element
 	{
-		BitArray<numberOfArrayElements, 9, false> bitArray;
+		BitArray<numberOfArrayElements, 9> bitArray;
 
 		for (int i = 0; i < numberOfArrayElements; ++i)
 		{
@@ -141,7 +143,7 @@ TEST_F(BitArray_static_test, Setting_and_getting_not_power_of_two_bits_5_13)
 
 	//Eleven bits per element
 	{
-		BitArray<numberOfArrayElements, 11, false> bitArray;
+		BitArray<numberOfArrayElements, 11> bitArray;
 
 		for (int i = 0; i < numberOfArrayElements; ++i)
 		{
@@ -156,7 +158,7 @@ TEST_F(BitArray_static_test, Setting_and_getting_not_power_of_two_bits_5_13)
 
 	//Five thirteen bits per element
 	{
-		BitArray<numberOfArrayElements, 13, false> bitArray;
+		BitArray<numberOfArrayElements, 13> bitArray;
 
 		for (int i = 0; i < numberOfArrayElements; ++i)
 		{
@@ -174,7 +176,7 @@ TEST_F(BitArray_static_test, Truncating_set_bits)
 {
 	constexpr unsigned numberOfArrayElements = 25;
 
-	BitArray<numberOfArrayElements, 4, false> bitArray;
+	BitArray<numberOfArrayElements, 4> bitArray;
 
 	//0b101010 which is 42 should be truncated to 0b1010 which is 10
 	bitArray.Set(0, 42);
