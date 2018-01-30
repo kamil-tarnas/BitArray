@@ -1,32 +1,29 @@
 #ifndef BIT_ARRAY_DYNAMIC
 #define BIT_ARRAY_DYNAMIC
 
-//TODO:Investigate the code bloat for this template, passing of size argument could be done
-//in run-time, there is no need to generate code for every occurrence of different size template
-//argument value
-
 /*
  * This must be done in run-time if we want to decide the size of array at the run-time
  */
 
-//Internal manual storage member variable
-//Template partial specialization for internal data_p manual storage BitArray instances
+// Internal manual storage member variable
+// Template partial specialization for internal data_p manual storage BitArray instances
 template<>
 class BitArray<>
 {
 public:
 	BitArray(unsigned sizeOfArray, unsigned sizeOfElement);
 	BitArray(const BitArray<>&);
-	BitArray<>& operator=(const BitArray<>&);
+	BitArray<>& operator=(const BitArray<>& rhs);
 	~BitArray();
 
 	unsigned Get(unsigned position);
 	void Set(unsigned position, unsigned value);
 
-	//Have to return reference to unsigned, it must fit the variable you are assigning
-	//Or reference to a bitfield? Can it be done?
+	// Should return some internal helper type to avoid returning reference to whole word
 	unsigned operator[](unsigned position) = delete;
+
 protected:
+
 private:
 	unsigned* data_p;
 	unsigned sizeOfArray;
@@ -39,8 +36,18 @@ BitArray<>::BitArray(unsigned sizeOfArray, unsigned sizeOfElement) :
 				   sizeOfArray(sizeOfArray),
 				   sizeOfElement(sizeOfElement)
 {
-	data_p = new unsigned[sizeOfArray];
+	data_p = new unsigned[CaculateInternalArraySize(sizeOfArray, sizeOfElement)];
 }
+
+
+//BitArray<>::BitArray(const BitArray<>& rhs) :
+//			data_p(new unsigned[CaculateInternalArraySize(rhs.sizeOfArray, rhs.sizeOfElement)]),
+//			sizeOfArray(rhs.sizeOfArray),
+//			sizeOfElement(rhs.sizeOfElement)
+//{
+//	CopyArrayElements(rhs.data_p, data_p,
+//						CaculateInternalArraySize(sizeOfArray, sizeOfElement));
+//}
 
 
 BitArray<>::~BitArray()
@@ -56,32 +63,34 @@ unsigned BitArray<>::Get(unsigned position)
 	 * be calculated many times in many different functions
 	 */
 
-	//The number of entries in word, in one element of "data_p" member variable array
+	// The number of entries in word, in one element of "data_p" member variable array
 	const unsigned amountOfEntriesPerWord = (sizeof(unsigned) * CHAR_BITS) / sizeOfElement;
 
-	//The position of word containing entry in "data_p" member variable
+	// The position of word containing entry in "data_p" member variable
 	const unsigned wordPositionInArray = position / amountOfEntriesPerWord;
 
-	//Relative position of entry in certain word, starting from zero, given in entries
+	// Relative position of entry in certain word, starting from zero, given in entries
 	const unsigned entryOffsetInWord = position - (wordPositionInArray * amountOfEntriesPerWord);
 
-	//Get the padding value
+	// Get the padding value
 	const unsigned paddingBits = (sizeof(unsigned) * CHAR_BITS) -
 								 (sizeOfElement * amountOfEntriesPerWord);
+
+	// Calculate the bit shift size, how much bits do we shift?
+	const unsigned bitShiftSize = sizeOfElement * (amountOfEntriesPerWord - 1 - entryOffsetInWord)
+			             + paddingBits;
+
+	// Calculate bit mask for further operations
+	const unsigned mask = ((1U << sizeOfElement) - 1);
 
 	/*
 	 * Getting the value of entry
 	 * Could it be optimized when indexing starts from least significant bits?
 	 */
 
-	//Bits to shift depend on element index and bitsPerEnty value, there is max shift to right in U32 word
-	const unsigned bitsToShift = ((amountOfEntriesPerWord - 1 - entryOffsetInWord) * sizeOfElement)
-								   + paddingBits;
-
-	//Return the bits of entry, they are located starting from MSB, so shifting right is required
-	//Mask for returned bits, bits that are not the part of entry will be cleared
-	//TODO: Measure bit shift versus ^ operator performance
-	return data_p[wordPositionInArray] >> bitsToShift & (unsigned)((1U << sizeOfElement) - 1);
+	// Return the bits of entry, they are located starting from MSB, so shifting right is required
+	// Mask for returned bits, bits that are not the part of entry will be cleared
+	return data_p[wordPositionInArray] >> bitShiftSize & mask;
 }
 
 
@@ -92,36 +101,41 @@ void BitArray<>::Set(unsigned position, unsigned value)
 	 * be calculated many times in many different functions
 	 */
 
-	//The number of entries in word, in one element of "data_p" member variable array
+	// The number of entries in word, in one element of "data_p" member variable array
 	const unsigned amountOfEntriesPerWord = (sizeof(unsigned) * CHAR_BITS) / sizeOfElement;
 
-	//The position of word containing entry in "data_p" member variable
+	// The position of word containing entry in "data_p" member variable
 	const unsigned wordPositionInArray = position / amountOfEntriesPerWord;
 
-	//Relative position of entry in certain word, starting from zero, given in entries
+	// Relative position of entry in certain word, starting from zero, given in entries
 	const unsigned entryOffsetInWord = position - (wordPositionInArray * amountOfEntriesPerWord);
 
-	//Get the padding value
+	// Get the padding value
 	const unsigned paddingBits = (sizeof(unsigned) * CHAR_BITS) -
 								 (sizeOfElement * amountOfEntriesPerWord);
+	// Calculate the bit shift size, how much bits do we shift?
+	const unsigned bitShiftSize = sizeOfElement * (amountOfEntriesPerWord - 1 - entryOffsetInWord)
+			             + paddingBits;
+
+	// Calculate bit mask for further operations
+	const unsigned mask = ((1U << sizeOfElement) - 1);
 
 	/*
 	 * Setting the value of entry
 	 */
 
-	//Truncate the bits of value which are at greater positions than sizeOfElemet -1
-	//This ensures that we will not overwrite value of another entries
-	value &= (unsigned)((1U << sizeOfElement) - 1);
+	// Truncate the bits of value which are at greater positions than sizeOfElemet -1
+	// This ensures that we will not overwrite value of another entries
+	value &= mask;
 
-	//Get bits in value to be set in the right place in word
-	value <<= (sizeOfElement * (amountOfEntriesPerWord - 1 - entryOffsetInWord) + paddingBits);
+	// Get bits in value to be set in the right place in word
+	value <<= bitShiftSize;
 
-	//Clear the bits corresponding to occupied in new entry in "data_p" array
-	data_p[wordPositionInArray] &= ~((((1U << sizeOfElement) - 1) <<
-			(sizeOfElement * (amountOfEntriesPerWord - 1 - entryOffsetInWord) + paddingBits)));
+	// Clear the bits corresponding to occupied in new entry in "data_p" array
+	data_p[wordPositionInArray] &= ~mask << bitShiftSize;
 
-	//Make bitwise "or" operation to merge bits of value moved to the right place
-	//with the rest of bits of word, that won't be modified
+	// Make bitwise "or" operation to merge bits of value moved to the right place
+	// with the rest of bits of word, that won't be modified
 	data_p[wordPositionInArray] |= value;
 }
 

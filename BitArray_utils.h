@@ -4,12 +4,21 @@
 //TODO: Temporary, remove after including proper header
 #define CHAR_BITS 8
 
+constexpr unsigned CaculateInternalArraySize(unsigned sizeOfArray, unsigned sizeOfElement) noexcept;
+
+void CopyArrayElements(unsigned* source, unsigned* destination, unsigned numberOfElements);
+
 constexpr unsigned CaculateInternalArraySize(unsigned sizeOfArray, unsigned sizeOfElement) noexcept
 {
-	return (((sizeOfArray * sizeOfElement) +
-		     (sizeof(unsigned) * CHAR_BITS) - 1) /
-			 (sizeof(unsigned) * CHAR_BITS));
+	/*
+	 * Get the number of elements that will fit on one word, then divide the sizeOfArray by
+	 * that number and take the ceiling of it
+	 */
+	return (sizeOfArray + ((sizeof(unsigned) * CHAR_BITS) / sizeOfElement) - 1) /
+		   ((sizeof(unsigned) * CHAR_BITS) / sizeOfElement);
 }
+
+void CopyArrayElements(unsigned* source, unsigned* destination, unsigned numberOfElements);
 
 //TODO: Size of array is needed, size in bits of element is needed
 template<unsigned ...>
