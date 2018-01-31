@@ -12,7 +12,7 @@ constexpr unsigned CaculateInternalArraySize(unsigned sizeOfArray, unsigned size
 {
 	/*
 	 * Get the number of elements that will fit on one word, then divide the sizeOfArray by
-	 * that number and take the ceiling of it
+	 * that number and take the ceiling of that operation
 	 */
 	return (sizeOfArray + ((sizeof(unsigned) * CHAR_BITS) / sizeOfElement) - 1) /
 		   ((sizeof(unsigned) * CHAR_BITS) / sizeOfElement);

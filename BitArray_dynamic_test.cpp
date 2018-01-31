@@ -12,6 +12,7 @@ class BitArray_dynamic_test : public testing::Test
 	virtual void TearDown() {}
 };
 
+
 TEST_F(BitArray_dynamic_test, Setting_and_getting_not_power_of_two_bits_1_3)
 {
 	constexpr unsigned numberOfArrayElements = 20;
@@ -53,6 +54,7 @@ TEST_F(BitArray_dynamic_test, Setting_and_getting_not_power_of_two_bits_1_3)
 
 //TODO: Write the following test cases
 }
+
 
 TEST_F(BitArray_dynamic_test, Setting_and_getting_not_power_of_two_bits_5_13)
 {
@@ -133,6 +135,7 @@ TEST_F(BitArray_dynamic_test, Setting_and_getting_not_power_of_two_bits_5_13)
 	}
 }
 
+
 TEST_F(BitArray_dynamic_test, Truncating_set_bits_even_sizeOfElement)
 {
 	constexpr unsigned numberOfArrayElements = 25;
@@ -161,6 +164,7 @@ TEST_F(BitArray_dynamic_test, Truncating_set_bits_even_sizeOfElement)
 	EXPECT_EQ(0, bitArray.Get(3));
 	EXPECT_EQ(15, bitArray.Get(24));
 }
+
 
 TEST_F(BitArray_dynamic_test, Truncating_set_bits_odd_sizeOfElement)
 {

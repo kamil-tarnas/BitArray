@@ -7,11 +7,6 @@ template<unsigned sizeOfArray, unsigned sizeOfElement>
 class BitArray<sizeOfArray, sizeOfElement>
 {
 public:
-	BitArray();
-	BitArray(const BitArray<sizeOfArray, sizeOfElement>&);
-	BitArray<sizeOfArray, sizeOfElement>& operator=(const BitArray<sizeOfArray, sizeOfElement>&);
-	~BitArray();
-
 	unsigned Get(unsigned position);
 	void Set(unsigned position, unsigned value);
 
@@ -23,18 +18,6 @@ protected:
 private:
 	unsigned data[CaculateInternalArraySize(sizeOfArray, sizeOfElement)];
 };
-
-
-template<unsigned sizeOfArray, unsigned sizeOfElement>
-BitArray<sizeOfArray, sizeOfElement>::BitArray()
-{
-}
-
-
-template<unsigned sizeOfArray, unsigned sizeOfElement>
-BitArray<sizeOfArray, sizeOfElement>::~BitArray()
-{
-}
 
 
 template<unsigned sizeOfArray, unsigned sizeOfElement>
