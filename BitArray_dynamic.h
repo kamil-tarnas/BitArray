@@ -40,14 +40,34 @@ BitArray<>::BitArray(unsigned sizeOfArray, unsigned sizeOfElement) :
 }
 
 
-//BitArray<>::BitArray(const BitArray<>& rhs) :
-//			data_p(new unsigned[CaculateInternalArraySize(rhs.sizeOfArray, rhs.sizeOfElement)]),
-//			sizeOfArray(rhs.sizeOfArray),
-//			sizeOfElement(rhs.sizeOfElement)
-//{
-//	CopyArrayElements(rhs.data_p, data_p,
-//						CaculateInternalArraySize(sizeOfArray, sizeOfElement));
-//}
+BitArray<>::BitArray(const BitArray<>& rhs) :
+			data_p(new unsigned[CaculateInternalArraySize(rhs.sizeOfArray, rhs.sizeOfElement)]),
+			sizeOfArray(rhs.sizeOfArray),
+			sizeOfElement(rhs.sizeOfElement)
+{
+	//Measure this versus memcpy function
+	for (unsigned i = 0; i < sizeOfArray; ++i)
+	{
+		data_p[i] = rhs.data_p[i]
+	}
+}
+
+
+BitArray<>::operator=(const BitArray<>& rhs)
+{
+	BitArray<> temporary(rhs);
+
+	//Delete the original storage
+	delete data_p;
+
+	//Swap pointers
+	data_p = temporary.data_p;
+	sizeOfArray = temporary.sizeOfArray;
+	sizeOfElement = temporary.sizeOfElement;
+
+	//Set the data_p to nullptr to not destroy data_p this as they point to the same storage
+	temporary.data_p = nullptr;
+}
 
 
 BitArray<>::~BitArray()
