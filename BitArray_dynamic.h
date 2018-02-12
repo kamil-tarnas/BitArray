@@ -11,7 +11,7 @@ template<>
 class BitArray<>
 {
 public:
-	BitArray() = default;
+	BitArray() = delete;
 	BitArray(unsigned sizeOfArray, unsigned sizeOfElement);
 	BitArray(const BitArray<>&);
 	BitArray<>& operator=(const BitArray<>& rhs);
@@ -46,8 +46,8 @@ BitArray<>::BitArray(const BitArray<>& rhs) :
 			sizeOfArray(rhs.sizeOfArray),
 			sizeOfElement(rhs.sizeOfElement)
 {
-	//Measure this versus memcpy function
-	for (unsigned i = 0; i < sizeOfArray; ++i)
+	//Measure this versus memcpy function, local var for loop end condttion
+	for (unsigned i = 0; i < CaculateInternalArraySize(rhs.sizeOfArray, rhs.sizeOfElement); ++i)
 	{
 		data_p[i] = rhs.data_p[i];
 	}

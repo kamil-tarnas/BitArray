@@ -417,7 +417,7 @@ TEST_F(BitArray_dynamic_test, Special_functions)
 	EXPECT_EQ(1689, secondBitArray.Get(75));
 
 	// Create "thirdBitArray" variable and test copy assignment
-	BitArray<> thirdBitArray;
+	BitArray<> thirdBitArray(numberOfArrayElements, 11);
 
 	for (int i = 0; i < numberOfArrayElements; ++i)
 	{
