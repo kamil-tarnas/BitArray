@@ -11,6 +11,7 @@ template<>
 class BitArray<>
 {
 public:
+	BitArray() = default;
 	BitArray(unsigned sizeOfArray, unsigned sizeOfElement);
 	BitArray(const BitArray<>&);
 	BitArray<>& operator=(const BitArray<>& rhs);
@@ -48,12 +49,12 @@ BitArray<>::BitArray(const BitArray<>& rhs) :
 	//Measure this versus memcpy function
 	for (unsigned i = 0; i < sizeOfArray; ++i)
 	{
-		data_p[i] = rhs.data_p[i]
+		data_p[i] = rhs.data_p[i];
 	}
 }
 
 
-BitArray<>::operator=(const BitArray<>& rhs)
+BitArray<>& BitArray<>::operator=(const BitArray<>& rhs)
 {
 	BitArray<> temporary(rhs);
 
