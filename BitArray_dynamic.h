@@ -14,7 +14,7 @@ public:
 	BitArray() = delete;
 	BitArray(unsigned sizeOfArray, unsigned sizeOfElement);
 	BitArray(const BitArray<>&);
-	BitArray<>& operator=(const BitArray<>& rhs);
+	BitArray<>& operator=(BitArray<> rhs);
 	~BitArray();
 
 	unsigned Get(unsigned position);
@@ -54,20 +54,24 @@ BitArray<>::BitArray(const BitArray<>& rhs) :
 }
 
 
-BitArray<>& BitArray<>::operator=(const BitArray<>& rhs)
+BitArray<>& BitArray<>::operator=(BitArray<> rhs)
 {
-	BitArray<> temporary(rhs);
-
 	//Delete the original storage
 	delete data_p;
 
 	//Swap pointers
-	data_p = temporary.data_p;
-	sizeOfArray = temporary.sizeOfArray;
-	sizeOfElement = temporary.sizeOfElement;
+	data_p = rhs.data_p;
+	sizeOfArray = rhs.sizeOfArray;
+	sizeOfElement = rhs.sizeOfElement;
+
+	/* Note, that the original storage data_p could be deleted by temporary rhs object destructor
+	 * when swapping ptrs
+	 */
 
 	//Set the data_p to nullptr to not destroy data_p this as they point to the same storage
-	temporary.data_p = nullptr;
+	rhs.data_p = nullptr;
+
+	return *this;
 }
 
 
