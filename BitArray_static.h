@@ -17,6 +17,19 @@ protected:
 
 private:
 	unsigned data[CaculateInternalArraySize(sizeOfArray, sizeOfElement)];
+
+	/*
+	 * For helper class BitArrayElemRefHelper those variable have to be visible, make
+	 * a friend class or think of something similar
+	 */
+
+	// The number of entries in word, in one element of "data" member variable array
+	static constexpr unsigned amountOfEntriesPerWord =
+													(sizeof(unsigned) * CHAR_BITS) / sizeOfElement;
+	// Get the padding value
+	static constexpr unsigned paddingBits =
+											(sizeof(unsigned) * CHAR_BITS) -
+											(sizeOfElement * amountOfEntriesPerWord);
 };
 
 
@@ -28,18 +41,11 @@ unsigned BitArray<sizeOfArray, sizeOfElement>::Get(unsigned position)
 	 * be calculated many times in many different functions
 	 */
 
-	// The number of entries in word, in one element of "data" member variable array
-	constexpr unsigned amountOfEntriesPerWord = (sizeof(unsigned) * CHAR_BITS) / sizeOfElement;
-
 	// The position of word containing entry in "data" member variable
 	const unsigned wordPositionInArray = position / amountOfEntriesPerWord;
 
 	// Relative position of entry in certain word, starting from zero, given in entries
 	const unsigned entryOffsetInWord = position - (wordPositionInArray * amountOfEntriesPerWord);
-
-	// Get the padding value
-	constexpr unsigned paddingBits = (sizeof(unsigned) * CHAR_BITS) -
-								 (sizeOfElement * amountOfEntriesPerWord);
 
 	// Calculate the bit shift size, how much bits do we shift?
 	const unsigned bitShiftSize = sizeOfElement * (amountOfEntriesPerWord - 1 - entryOffsetInWord)
@@ -52,7 +58,6 @@ unsigned BitArray<sizeOfArray, sizeOfElement>::Get(unsigned position)
 	 * Getting the value of entry
 	 * Could it be optimized when indexing starts from least significant bits?
 	 */
-
 
 	// Return the bits of entry, they are located starting from MSB, so shifting right is required
 	// Mask for returned bits, bits that are not the part of entry will be cleared
@@ -68,18 +73,11 @@ void BitArray<sizeOfArray, sizeOfElement>::Set(unsigned position, unsigned value
 	 * be calculated many times in many different functions
 	 */
 
-	// The number of entries in word, in one element of "data" member variable array
-	constexpr unsigned amountOfEntriesPerWord = (sizeof(unsigned) * CHAR_BITS) / sizeOfElement;
-
 	// The position of word containing entry in "data" member variable
 	const unsigned wordPositionInArray = position / amountOfEntriesPerWord;
 
 	// Relative position of entry in certain word, starting from zero, given in entries
 	const unsigned entryOffsetInWord = position - (wordPositionInArray * amountOfEntriesPerWord);
-
-	// Get the padding value
-	constexpr unsigned paddingBits = (sizeof(unsigned) * CHAR_BITS) -
-								 (sizeOfElement * amountOfEntriesPerWord);
 
 	// Calculate the bit shift size, how much bits do we shift?
 	const unsigned bitShiftSize = sizeOfElement * (amountOfEntriesPerWord - 1 - entryOffsetInWord)
