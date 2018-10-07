@@ -1,76 +1,7 @@
 #ifndef BIT_ARRAY_STATIC
 #define BIT_ARRAY_STATIC
 
-//This can be befiriended with the main BitArray class
-//Proxy class for returning references to elements in BitArray class instances
-template<unsigned sizeOfArray, unsigned sizeOfElement>
-class BitArrayElemRefHelper
-{
-   /*
-    * Class should hold reference or pointer to whole word containing
-    * desired array element - the specific bits in referenced word.
-    * Class should modify the desired bits according to specific behaviour.
-    *
-    * Problematic might be assigning this varaible to element of array of template class BitArray
-    * Therefore we should always operate on this type (BitArrayElemRefHelper) and only cast to other types -
-    * the real ones, like int or unsigned - when assiging from this type. So here should be
-    * type cast defined.
-    */
-
-
-   /* How this would work?
-    * BitArray someArray;
-    * someArray[3] (this would return an object of BitArrayElemRefHelper class)
-    *
-    * Typical use case would be
-    *
-    * someArray[3] = 4;
-    * Here we should define implicit conversion from int to BitArrayElemRefHelper
-    * and do an operation of assigning this int to specific word in BitArray instance
-    *
-    */
-
-    //CONVERTING CONSTRUCTOR
-
-    //The constructor can take only one integer and it will be okay,
-    //The problems are conversions from int to unsigned
-    //And copy assignment operator
-    //
-    //Operator [] should return most information, that is the reference of word?
-	//Constructor can be defined in private part of accessibility, befriending this class
-	//with BitArray will guarantee possibility of accessing this constructor and will
-	//prevent creating an object of this class in another circumstances
-    public:
-       BitArrayElemRefHelper(unsigned assignment);
-       /*
-        * = operator shall be defined for this class, it will be used when assigning through the
-        * proxy object to undarlying storage in the main BitArray class
-        */
-
-       // Another constructor, which most preferably should be called only from BitArray class
-       // Private constructor, which is a friend function for BitArray class?
-       BitArrayElemRefHelper(unsigned elementOffset,
-							 unsigned& referencedWord)
-       {
-    	   refWord = &referencedWord;
-    	   elementOffset = elementOffset;
-       }
-
-    protected:
-    private:
-
-    //Pointer or reference - decide!
-    unsigned& refWord;
-    unsigned elementOffset;
-
-    //Befriend the main class, template parameters cannot shadow each other, give non-type
-    //template parameters some new names
-    template<unsigned a, unsigned b>
-    friend class BitArray;
-
-    //What information do we need here?
-    //Trying to make this object as lightweighted as possible
-};
+#include "BitArrayElemRefHelper.h"
 
 // Internal automatic storage member variable
 // Template partial specialization for internal data automatic storage BitArray instances
@@ -82,7 +13,7 @@ public:
 	void Set(unsigned position, unsigned value);
 
 	// Should return some internal helper type to avoid returning reference to whole word
-	BitArrayElemRefHelper<sizeOfArray, sizeOfElement> operator[](unsigned position) = delete;
+	BitArrayElemRefHelper<sizeOfArray, sizeOfElement> operator[](unsigned position);
 
 protected:
 
@@ -95,12 +26,12 @@ private:
 	 */
 
 	// The number of entries in word, in one element of "data" member variable array
-	static constexpr unsigned amountOfEntriesPerWord =
-													(sizeof(unsigned) * CHAR_BITS) / sizeOfElement;
+	static constexpr unsigned amountOfEntriesPerWord = (sizeof(unsigned) * CHAR_BITS) /
+														sizeOfElement;
 	// Get the padding value
-	static constexpr unsigned paddingBits =
-											(sizeof(unsigned) * CHAR_BITS) -
+	static constexpr unsigned paddingBits = (sizeof(unsigned) * CHAR_BITS) -
 											(sizeOfElement * amountOfEntriesPerWord);
+
 	//Befriend helper class, template parameters cannot shadow each other, give non-type
     //template parameters some new names
 	template<unsigned a, unsigned b>
@@ -181,87 +112,30 @@ void BitArray<sizeOfArray, sizeOfElement>::Set(unsigned position, unsigned value
 }
 
 
+// Argument for operator[] should be int to avoid representation changing conversion
+//TODO: This should be declared after BitArrayElemRefHelper, because its definition
+// 		must be known before return value instantiation of its object
 template<unsigned sizeOfArray, unsigned sizeOfElement>
-BitArrayElemRefHelper<sizeOfArray, sizeOfElement>::BitArrayElemRefHelper(unsigned assignment)
+BitArrayElemRefHelper<sizeOfArray, sizeOfElement>
+BitArray<sizeOfArray, sizeOfElement>::operator[](unsigned position)
 {
-	// We already have the referenced word?
-	// No, we should calculate it here, based on desired returning elem?
-	// Or we should construct BitArrayElemRefHelper instance with specific knowledge
-	// of the position of referenced element?
-
 	/*
 	 * Probably these computations could be put in separate inline function, as they will
 	 * be calculated many times in many different functions
 	 */
 
+	// The number of entries in word, in one element of "data" member variable array
+	constexpr unsigned amountOfEntriesPerWord = (sizeof(unsigned) * CHAR_BITS) / sizeOfElement;
 
-	/*
-	 * HOW TO GET TO PARAMETER TEMPLATE VALUES FROM OTEHR CLASS?
-	 * AMOUNT OF ENTRIES AND SO ON values could be held on some static
-	 * variable, some const static variable, or event constexpr static variable
-	 *
-	 * getting to that value might be costly though?
-	 *
-	 * but how to get to different temlatizations of the same class
-	 * we should have the possiblity of getting different parameters (for example:
-	 * sizeOfElement) for different templatization of BitArray
-	 *
-	 * This should be a template, which takes template as its template argument
-	 */
+	// The position of word containing entry in "data" member variable
+	const unsigned wordPositionInArray = position / amountOfEntriesPerWord;
 
-	// Calculate the bit shift size, how much bits do we shift?
-	const unsigned bitShiftSize = sizeOfElement * (BitArray<sizeOfArray, sizeOfElement>::amountOfEntriesPerWord - 1 - elementOffset)
-				            		 + BitArray<sizeOfArray, sizeOfElement>::paddingBits;
+	// Relative position of entry in certain word, starting from zero, given in entries
+	const unsigned entryOffsetInWord = position - (wordPositionInArray * amountOfEntriesPerWord);
 
-	// Calculate bit mask for further operations
-	const unsigned mask = ((1U << sizeOfElement) - 1);
-
-	/*
-	 * Setting the value of entry
-	 */
-
-	// Truncate the bits of value which are at greater positions than sizeOfElemet -1
-	// This ensures that we will not overwrite value of another entries in array
-	assignment &= mask;
-
-	// Get bits in value to be set in the right place in word
-	assignment <<= bitShiftSize;
-
-	// Clear the bits corresponding to occupied in new entry in "data" array
-	refWord &= ~mask << bitShiftSize;
-
-	// Make bitwise "or" operation to merge bits of value moved to the right place
-	// with the rest of bits of word, that won't be modified
-	refWord |= assignment;
-
+	return BitArrayElemRefHelper<sizeOfArray, sizeOfElement>
+								(entryOffsetInWord, data[wordPositionInArray]);
 }
-
-
-//Commented out temporairly
-
-//// Argument for opeartor[] should be int to avoid representation changing conversion
-////TODO: This should be declared after BitArrayElemRefHelper, because its definition
-//// 		must be known before return value instantiation of its object
-//template<unsigned sizeOfArray, unsigned sizeOfElement>
-//BitArrayElemRefHelper<sizeOfArray, sizeOfElement>::operator[](unsigned position)
-//{
-//	/*
-//	 * Probably these computations could be put in separate inline function, as they will
-//	 * be calculated many times in many different functions
-//	 */
-//
-//	// The number of entries in word, in one element of "data" member variable array
-//	constexpr unsigned amountOfEntriesPerWord = (sizeof(unsigned) * CHAR_BITS) / sizeOfElement;
-//
-//	// The position of word containing entry in "data" member variable
-//	const unsigned wordPositionInArray = position / amountOfEntriesPerWord;
-//
-//	// Relative position of entry in certain word, starting from zero, given in entries
-//	const unsigned entryOffsetInWord = position - (wordPositionInArray * amountOfEntriesPerWord);
-//
-//	return BitArrayElemRefHelper<BitArray<sizeOfArray, sizeOfElement>
-//						(entryOffsetInWord, data[wordPositionInArray]);
-//}
 
 
 #endif //#ifndef BIT_ARRAY_STATIC
