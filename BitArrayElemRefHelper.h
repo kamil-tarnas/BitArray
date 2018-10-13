@@ -42,6 +42,15 @@ class BitArrayElemRefHelper
 	//prevent creating an object of this class in another circumstances
     public:
 
+    //Need to be implicit
+	//Also needs to be public, you cannot befriend it in unsigned type class declaration, there is
+	//no such declaration xD
+    operator unsigned();
+
+    //Moved to public section temporairly
+    // Analyse if returning reference to ElemRefHelper class is the best way of impelenting this
+    BitArrayElemRefHelper& operator=(unsigned assignment);
+
     protected:
 
     private:
@@ -58,19 +67,15 @@ class BitArrayElemRefHelper
     // Object of type BitArrayElemRefHelper should be instantiated only by BitArray class
     BitArrayElemRefHelper(unsigned elementOffset, unsigned& referencedWord);
 
-    //Need to be implicit
-    operator unsigned();
-
 	//Pointer or reference - decide!
-    unsigned& refWord;
+    unsigned& refWord; //Must be initialized in constructor initializer list
 
     //Is this really needed? How can we make this object as lightweight as possible?
     unsigned elementOffset;
 
     //Befriend the main class, template parameters cannot shadow each other, give non-type
     //template parameters some new names
-    template<unsigned a, unsigned b>
-    friend class BitArray;
+    friend class BitArray<sizeOfArray, sizeOfElement>;
 
     //What information do we need here?
     //Trying to make this object as lightweighted as possible
@@ -136,9 +141,9 @@ BitArrayElemRefHelper(unsigned assignment)
 // Used by BitArray::operator[]
 template<unsigned sizeOfArray, unsigned sizeOfElement>
 BitArrayElemRefHelper<sizeOfArray, sizeOfElement>::
-BitArrayElemRefHelper(unsigned elementOffset, unsigned& referencedWord)
+BitArrayElemRefHelper(unsigned elementOffset, unsigned& referencedWord) : refWord(referencedWord)
 {
-	refWord = &referencedWord;
+	// Bind the reference in ctor initializer list
 	elementOffset = elementOffset;
 }
 
@@ -169,5 +174,43 @@ operator unsigned()
 	// Mask for returned bits, bits that are not the part of entry will be cleared
 	return refWord >> bitShiftSize & mask;
 }
+
+
+template<unsigned sizeOfArray, unsigned sizeOfElement>
+BitArrayElemRefHelper<sizeOfArray, sizeOfElement>&
+BitArrayElemRefHelper<sizeOfArray, sizeOfElement>::
+operator=(unsigned assignment)
+{
+	/*
+	 * Should this do exactly the same as converting constructor?
+	 */
+
+	// Calculate the bit shift size, how much bits do we shift?
+	const unsigned bitShiftSize = sizeOfElement *
+			(BitArray<sizeOfArray, sizeOfElement>::amountOfEntriesPerWord - 1 - elementOffset) +
+			BitArray<sizeOfArray, sizeOfElement>::paddingBits;
+
+	// Calculate bit mask for further operations
+	const unsigned mask = ((1U << sizeOfElement) - 1);
+
+	/*
+	 * Setting the value of entry
+	 */
+
+	// Truncate the bits of value which are at greater positions than sizeOfElemet -1
+	// This ensures that we will not overwrite value of another entries in array
+	assignment &= mask;
+
+	// Get bits in value to be set in the right place in word
+	assignment <<= bitShiftSize;
+
+	// Clear the bits corresponding to occupied in new entry in "data" array
+	refWord &= ~mask << bitShiftSize;
+
+	// Make bitwise "or" operation to merge bits of value moved to the right place
+	// with the rest of bits of word, that won't be modified
+	refWord |= assignment;
+}
+
 
 #endif //#ifndef BIT_ARRAY_ELEM_REF_HEPLER

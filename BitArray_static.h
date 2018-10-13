@@ -34,8 +34,7 @@ private:
 
 	//Befriend helper class, template parameters cannot shadow each other, give non-type
     //template parameters some new names
-	template<unsigned a, unsigned b>
-	friend class BitArrayElemRefHelper;
+	friend class BitArrayElemRefHelper<sizeOfArray, sizeOfElement>;
 };
 
 
