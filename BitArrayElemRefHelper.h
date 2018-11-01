@@ -144,7 +144,7 @@ BitArrayElemRefHelper<sizeOfArray, sizeOfElement>::
 BitArrayElemRefHelper(unsigned elementOffset, unsigned& referencedWord) : refWord(referencedWord)
 {
 	// Bind the reference in ctor initializer list
-	elementOffset = elementOffset;
+	this->elementOffset = elementOffset;
 }
 
 // Used to convert ElemRefHelper to unsigned type
