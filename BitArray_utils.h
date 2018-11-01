@@ -27,4 +27,5 @@ class BitArray
 	//No need to implement this, all cases are covered by template specializations
 };
 
+
 #endif //#ifndef BIT_ARRAY_UTILS

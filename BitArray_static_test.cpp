@@ -443,3 +443,41 @@ TEST_F(BitArray_static_test, Special_functions)
 	EXPECT_EQ(947, thirdBitArray.Get(74));
 	EXPECT_EQ(1689, thirdBitArray.Get(75));
 }
+
+
+TEST_F(BitArray_static_test, Assigning_return_value_of_operator_subscript)
+{
+	// First case
+	BitArray<10, 2> arrayObject;
+
+	arrayObject.Set(2, 1);
+
+	int a = arrayObject[2];
+
+	EXPECT_EQ(1, a);
+
+	// Second case
+	BitArray<5, 12> secondArrayObject;
+
+	secondArrayObject.Set(3, 34);
+
+	unsigned b = secondArrayObject[3];
+
+	EXPECT_EQ(34, b);
+}
+
+
+TEST_F(BitArray_static_test, Modifying_subscripted_element)
+{
+	// First case
+	BitArray<10, 2> arrayObject;
+	arrayObject[6] = 2;
+
+	EXPECT_EQ(2, arrayObject.Get(6));
+
+	// Second case
+	BitArray<5, 12> secondArrayObject;
+	secondArrayObject[3] = 34;
+
+	EXPECT_EQ(34, secondArrayObject.Get(3));
+}

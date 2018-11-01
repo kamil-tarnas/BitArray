@@ -1,6 +1,8 @@
 #ifndef BIT_ARRAY_STATIC
 #define BIT_ARRAY_STATIC
 
+#include "BitArrayElemRefHelper.h"
+
 // Internal automatic storage member variable
 // Template partial specialization for internal data automatic storage BitArray instances
 template<unsigned sizeOfArray, unsigned sizeOfElement>
@@ -11,7 +13,7 @@ public:
 	void Set(unsigned position, unsigned value);
 
 	// Should return some internal helper type to avoid returning reference to whole word
-	unsigned operator[](unsigned position) = delete;
+	BitArrayElemRefHelper<sizeOfArray, sizeOfElement> operator[](unsigned position);
 
 protected:
 
@@ -24,12 +26,15 @@ private:
 	 */
 
 	// The number of entries in word, in one element of "data" member variable array
-	static constexpr unsigned amountOfEntriesPerWord =
-													(sizeof(unsigned) * CHAR_BITS) / sizeOfElement;
+	static constexpr unsigned amountOfEntriesPerWord = (sizeof(unsigned) * CHAR_BITS) /
+														sizeOfElement;
 	// Get the padding value
-	static constexpr unsigned paddingBits =
-											(sizeof(unsigned) * CHAR_BITS) -
+	static constexpr unsigned paddingBits = (sizeof(unsigned) * CHAR_BITS) -
 											(sizeOfElement * amountOfEntriesPerWord);
+
+	//Befriend helper class, template parameters cannot shadow each other, give non-type
+    //template parameters some new names
+	friend class BitArrayElemRefHelper<sizeOfArray, sizeOfElement>;
 };
 
 
@@ -104,5 +109,32 @@ void BitArray<sizeOfArray, sizeOfElement>::Set(unsigned position, unsigned value
 	// with the rest of bits of word, that won't be modified
 	data[wordPositionInArray] |= value;
 }
+
+
+// Argument for operator[] should be int to avoid representation changing conversion
+//TODO: This should be declared after BitArrayElemRefHelper, because its definition
+// 		must be known before return value instantiation of its object
+template<unsigned sizeOfArray, unsigned sizeOfElement>
+BitArrayElemRefHelper<sizeOfArray, sizeOfElement>
+BitArray<sizeOfArray, sizeOfElement>::operator[](unsigned position)
+{
+	/*
+	 * Probably these computations could be put in separate inline function, as they will
+	 * be calculated many times in many different functions
+	 */
+
+	// The number of entries in word, in one element of "data" member variable array
+	constexpr unsigned amountOfEntriesPerWord = (sizeof(unsigned) * CHAR_BITS) / sizeOfElement;
+
+	// The position of word containing entry in "data" member variable
+	const unsigned wordPositionInArray = position / amountOfEntriesPerWord;
+
+	// Relative position of entry in certain word, starting from zero, given in entries
+	const unsigned entryOffsetInWord = position - (wordPositionInArray * amountOfEntriesPerWord);
+
+	return BitArrayElemRefHelper<sizeOfArray, sizeOfElement>
+								(entryOffsetInWord, data[wordPositionInArray]);
+}
+
 
 #endif //#ifndef BIT_ARRAY_STATIC
