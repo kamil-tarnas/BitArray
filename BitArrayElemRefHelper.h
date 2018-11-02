@@ -141,10 +141,10 @@ BitArrayElemRefHelper(unsigned assignment)
 // Used by BitArray::operator[]
 template<unsigned sizeOfArray, unsigned sizeOfElement>
 BitArrayElemRefHelper<sizeOfArray, sizeOfElement>::
-BitArrayElemRefHelper(unsigned elementOffset, unsigned& referencedWord) : refWord(referencedWord)
+BitArrayElemRefHelper(unsigned elementOffset, unsigned& referencedWord) :
+	refWord(referencedWord), elementOffset(elementOffset)
 {
-	// Bind the reference in ctor initializer list
-	this->elementOffset = elementOffset;
+	// All is done in constructor member initializer list
 }
 
 // Used to convert ElemRefHelper to unsigned type
