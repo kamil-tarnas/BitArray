@@ -2,3 +2,7 @@
 
 
 g++ BitArray.h BitArray_utils.cpp  main_test.cpp BitArray_static_test.cpp BitArray_dynamic_test.cpp -g -std=c++14 -o test -I $$GTEST_HOME/include -L $$GTEST_HOME/lib -lgtest -lgtest_main -lpthread
+
+#clang is not working right now
+#https://eli.thegreenplace.net/2012/12/17/dumping-a-c-objects-memory-layout-with-clang/
+#clang -cc1 -fdump-record-layouts BitArray.h BitArray_utils.cpp  main_test.cpp BitArray_static_test.cpp BitArray_dynamic_test.cpp -g -std=c++14 -o test -I $$GTEST_HOME/include -L $$GTEST_HOME/lib -lgtest -lgtest_main -lpthread
