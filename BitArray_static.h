@@ -88,6 +88,14 @@ void BitArray<sizeOfArray, sizeOfElement>::Set(unsigned position, unsigned value
 	const unsigned bitShiftSize = sizeOfElement * (amountOfEntriesPerWord - 1 - entryOffsetInWord)
 			             + paddingBits;
 
+	//TODO: Do not calculate mask? How to check in the best way if the value exceeds limit?
+	// Have some value, which would be calculated during instantiation? This would save calculation
+	// cycles, but the concern is data locality.
+
+	/*
+	 * Find the MSB set? Any other concepts?
+	 */
+
 	// Calculate bit mask for further operations
 	const unsigned mask = ((1U << sizeOfElement) - 1);
 
