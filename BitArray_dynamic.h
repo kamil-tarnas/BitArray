@@ -97,13 +97,8 @@ unsigned BitArray<>::Get(unsigned position)
 	// Relative position of entry in certain word, starting from zero, given in entries
 	const unsigned entryOffsetInWord = position - (wordPositionInArray * amountOfEntriesPerWord);
 
-	// Get the padding value
-	const unsigned paddingBits = (sizeof(unsigned) * CHAR_BITS) -
-								 (sizeOfElement * amountOfEntriesPerWord);
-
 	// Calculate the bit shift size, how much bits do we shift?
-	const unsigned bitShiftSize = sizeOfElement * (amountOfEntriesPerWord - 1 - entryOffsetInWord)
-			             + paddingBits;
+	const unsigned bitShiftSize = sizeOfElement * (amountOfEntriesPerWord - 1 - entryOffsetInWord);
 
 	// Calculate bit mask for further operations
 	const unsigned mask = ((1U << sizeOfElement) - 1);
@@ -135,12 +130,8 @@ void BitArray<>::Set(unsigned position, unsigned value)
 	// Relative position of entry in certain word, starting from zero, given in entries
 	const unsigned entryOffsetInWord = position - (wordPositionInArray * amountOfEntriesPerWord);
 
-	// Get the padding value
-	const unsigned paddingBits = (sizeof(unsigned) * CHAR_BITS) -
-								 (sizeOfElement * amountOfEntriesPerWord);
 	// Calculate the bit shift size, how much bits do we shift?
-	const unsigned bitShiftSize = sizeOfElement * (amountOfEntriesPerWord - 1 - entryOffsetInWord)
-			             + paddingBits;
+	const unsigned bitShiftSize = sizeOfElement * (amountOfEntriesPerWord - 1 - entryOffsetInWord);
 
 	// Calculate bit mask for further operations
 	const unsigned mask = ((1U << sizeOfElement) - 1);

@@ -113,8 +113,7 @@ BitArrayElemRefHelper(unsigned assignment)
 
 	// Calculate the bit shift size, how much bits do we shift?
 	const unsigned bitShiftSize = sizeOfElement *
-		  (BitArray<sizeOfArray, sizeOfElement>::amountOfEntriesPerWord - 1 - elementOffset) +
-		   BitArray<sizeOfArray, sizeOfElement>::paddingBits;
+		  (BitArray<sizeOfArray, sizeOfElement>::amountOfEntriesPerWord - 1 - elementOffset);
 
 	// Calculate bit mask for further operations
 	const unsigned mask = ((1U << sizeOfElement) - 1);
@@ -159,8 +158,7 @@ operator unsigned()
 
 	// Calculate the bit shift size, how much bits do we shift?
 	const unsigned bitShiftSize = sizeOfElement *
-		  (BitArray<sizeOfArray, sizeOfElement>::amountOfEntriesPerWord - 1 - elementOffset) +
-		   BitArray<sizeOfArray, sizeOfElement>::paddingBits;
+		  (BitArray<sizeOfArray, sizeOfElement>::amountOfEntriesPerWord - 1 - elementOffset);
 
 	// Calculate bit mask for further operations
 	const unsigned mask = ((1U << sizeOfElement) - 1);
@@ -187,8 +185,7 @@ operator=(unsigned assignment)
 
 	// Calculate the bit shift size, how much bits do we shift?
 	const unsigned bitShiftSize = sizeOfElement *
-			(BitArray<sizeOfArray, sizeOfElement>::amountOfEntriesPerWord - 1 - elementOffset) +
-			BitArray<sizeOfArray, sizeOfElement>::paddingBits;
+			(BitArray<sizeOfArray, sizeOfElement>::amountOfEntriesPerWord - 1 - elementOffset);
 
 	// Calculate bit mask for further operations
 	const unsigned mask = ((1U << sizeOfElement) - 1);
