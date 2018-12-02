@@ -32,6 +32,9 @@ private:
 	static constexpr unsigned paddingBits = (sizeof(unsigned) * CHAR_BITS) -
 											(sizeOfElement * amountOfEntriesPerWord);
 
+	// Calculate bit mask for truncating operations
+	static constexpr unsigned mask = ((1U << sizeOfElement) - 1);
+
 	//Befriend helper class, template parameters cannot shadow each other, give non-type
     //template parameters some new names
 	friend class BitArrayElemRefHelper<sizeOfArray, sizeOfElement>;
@@ -55,9 +58,6 @@ unsigned BitArray<sizeOfArray, sizeOfElement>::Get(unsigned position)
 	// Calculate the bit shift size, how much bits do we shift?
 	const unsigned bitShiftSize = sizeOfElement * (amountOfEntriesPerWord - 1 - entryOffsetInWord)
 			             + paddingBits;
-
-	// Calculate bit mask for further operations
-	const unsigned mask = ((1U << sizeOfElement) - 1);
 
 	/*
 	 * Getting the value of entry
@@ -95,9 +95,6 @@ void BitArray<sizeOfArray, sizeOfElement>::Set(unsigned position, unsigned value
 	/*
 	 * Find the MSB set? Any other concepts?
 	 */
-
-	// Calculate bit mask for further operations
-	const unsigned mask = ((1U << sizeOfElement) - 1);
 
 	/*
 	 * Setting the value of entry
