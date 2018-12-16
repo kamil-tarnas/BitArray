@@ -4,6 +4,8 @@
 //TODO: Temporary, remove after including proper header
 #define CHAR_BITS 8
 
+#include <exception>
+
 constexpr unsigned CaculateInternalArraySize(unsigned sizeOfArray, unsigned sizeOfElement) noexcept;
 
 void CopyArrayElements(unsigned* source, unsigned* destination, unsigned numberOfElements);

@@ -32,7 +32,8 @@ private:
 	static constexpr unsigned paddingBits = (sizeof(unsigned) * CHAR_BITS) -
 											(sizeOfElement * amountOfEntriesPerWord);
 
-	// Calculate bit mask for truncating operations
+	// Calculate bit mask for truncating operations, value of this variable
+	// is also the maximal numeric value that can be stored in one entry
 	static constexpr unsigned mask = ((1U << sizeOfElement) - 1);
 
 	//Befriend helper class, template parameters cannot shadow each other, give non-type
@@ -93,16 +94,18 @@ void BitArray<sizeOfArray, sizeOfElement>::Set(unsigned position, unsigned value
 	// cycles, but the concern is data locality.
 
 	/*
-	 * Find the MSB set? Any other concepts?
+	 * Find the MSB set? Any other concepts? Lookup table with limits and compare
 	 */
 
 	/*
 	 * Setting the value of entry
 	 */
 
-	// Truncate the bits of value which are at greater positions than sizeOfElemet -1
-	// This ensures that we will not overwrite value of another entries in array
-	value &= mask;
+	// Throw exception if the input value is too high
+	if (value > mask)
+	{
+		throw std::exception();
+	}
 
 	// Get bits in value to be set in the right place in word
 	value <<= bitShiftSize;
