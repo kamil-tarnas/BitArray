@@ -1,6 +1,18 @@
 #ifndef BIT_ARRAY
 #define BIT_ARRAY
 
+/* Current view of internal storage of BitArray class, after padding optimization
+ *
+ *   wordPositionInArray                             0                                                          1
+ *                       ------------------------------------------------------------------------------------------------------------------
+ *                       ||  5  |       9       |       9       |       9        ||  5  |       9        |       9        |        9       |
+ *                       ------------------------------------------------------------------------------------------------------------------
+ *                       MSB                                                  LSB  MSB                                                  LSB
+ *   entryOffsetInWord          0                1                 2                      0                1                 2
+ *   position                   1                2                 3                      4                5                 6
+ */
+
+
 /* Description of internal, underlying storage used by BitArray
  *
  *   wordPositionInArray                             0                                                          1
