@@ -28,9 +28,6 @@ private:
 	// The number of entries in word, in one element of "data" member variable array
 	static constexpr unsigned amountOfEntriesPerWord = (sizeof(unsigned) * CHAR_BITS) /
 														sizeOfElement;
-	// Get the padding value
-	static constexpr unsigned paddingBits = (sizeof(unsigned) * CHAR_BITS) -
-											(sizeOfElement * amountOfEntriesPerWord);
 
 	// Calculate bit mask for truncating operations
 	static constexpr unsigned mask = ((1U << sizeOfElement) - 1);
@@ -56,8 +53,7 @@ unsigned BitArray<sizeOfArray, sizeOfElement>::Get(unsigned position)
 	const unsigned entryOffsetInWord = position - (wordPositionInArray * amountOfEntriesPerWord);
 
 	// Calculate the bit shift size, how much bits do we shift?
-	const unsigned bitShiftSize = sizeOfElement * (amountOfEntriesPerWord - 1 - entryOffsetInWord)
-			             + paddingBits;
+	const unsigned bitShiftSize = sizeOfElement * (amountOfEntriesPerWord - 1 - entryOffsetInWord);
 
 	/*
 	 * Getting the value of entry
@@ -85,8 +81,7 @@ void BitArray<sizeOfArray, sizeOfElement>::Set(unsigned position, unsigned value
 	const unsigned entryOffsetInWord = position - (wordPositionInArray * amountOfEntriesPerWord);
 
 	// Calculate the bit shift size, how much bits do we shift?
-	const unsigned bitShiftSize = sizeOfElement * (amountOfEntriesPerWord - 1 - entryOffsetInWord)
-			             + paddingBits;
+	const unsigned bitShiftSize = sizeOfElement * (amountOfEntriesPerWord - 1 - entryOffsetInWord);
 
 
 	/*
