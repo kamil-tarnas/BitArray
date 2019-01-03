@@ -102,6 +102,7 @@ void BitArray<sizeOfArray, sizeOfElement>::Set(unsigned position, unsigned value
 	 */
 
 	// Throw exception if the input value is too high
+	// Catching thrown exception is is on the side of user code
 	if (value > mask)
 	{
 		throw std::exception();
