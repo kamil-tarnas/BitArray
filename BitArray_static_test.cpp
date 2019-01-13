@@ -316,36 +316,6 @@ TEST_F(BitArray_static_test, Setting_and_getting_odd_sizeOfEntry_all_bits_set)
 }
 
 
-TEST_F(BitArray_static_test, Truncating_set_bits)
-{
-	constexpr unsigned numberOfArrayElements = 25;
-
-	BitArray<numberOfArrayElements, 4> bitArray;
-
-	// 0b101010 which is 42 should be truncated to 0b1010 which is 10
-	bitArray.Set(0, 42);
-
-	// 0b100111 should be truncated to 0b0111
-	bitArray.Set(1, 0b100111);
-
-	// 0b101100 which is 42 should be truncated to 12
-	bitArray.Set(2, 44);
-
-	// 16 which is 0b10000 should be truncated to 0
-	bitArray.Set(3, 16);
-
-	// Set the last value for test to the last element if array 31 should be truncated to 15
-	bitArray.Set(24, 31);
-
-	// Check the values
-	EXPECT_EQ(10, bitArray.Get(0));
-	EXPECT_EQ(7, bitArray.Get(1));
-	EXPECT_EQ(12, bitArray.Get(2));
-	EXPECT_EQ(0, bitArray.Get(3));
-	EXPECT_EQ(15, bitArray.Get(24));
-}
-
-
 TEST_F(BitArray_static_test, Random_insertion_test)
 {
 	constexpr unsigned numberOfArrayElements = 100;
@@ -480,4 +450,22 @@ TEST_F(BitArray_static_test, Modifying_subscripted_element)
 	secondArrayObject[3] = 34;
 
 	EXPECT_EQ(34, secondArrayObject.Get(3));
+}
+
+
+TEST_F(BitArray_static_test, Catching_exceptions)
+{
+	constexpr unsigned numberOfArrayElements = 25;
+
+	BitArray<numberOfArrayElements, 4> bitArray;
+
+	try
+	{
+		// 0b101010 which is 42 exceeds numeric bit resolution of BitArray instance
+		bitArray.Set(0, 42);
+	}
+	catch (const std::exception& e)
+	{
+		// Do nothing? Test passed if every exception is thrown?
+	}
 }
