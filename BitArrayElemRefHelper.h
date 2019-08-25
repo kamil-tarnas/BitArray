@@ -67,12 +67,12 @@ class BitArrayElemRefHelper
     // Object of type BitArrayElemRefHelper should be instantiated only by BitArray class
     BitArrayElemRefHelper(unsigned elementOffset, unsigned& referencedWord);
 
-	//Pointer or reference - decide!
-    unsigned& refWord; //Must be initialized in constructor initializer list
-
     //Is this really needed? How can we make this object as lightweight as possible?
     unsigned elementOffset;
 
+    //Pointer or reference - decide!
+    unsigned& refWord; //Must be initialized in constructor initializer list
+    
     //Befriend the main class, template parameters cannot shadow each other, give non-type
     //template parameters some new names
     friend class BitArray<sizeOfArray, sizeOfElement>;
@@ -141,7 +141,7 @@ BitArrayElemRefHelper(unsigned assignment)
 template<unsigned sizeOfArray, unsigned sizeOfElement>
 BitArrayElemRefHelper<sizeOfArray, sizeOfElement>::
 BitArrayElemRefHelper(unsigned elementOffset, unsigned& referencedWord) :
-	refWord(referencedWord), elementOffset(elementOffset)
+	 elementOffset(elementOffset), refWord(referencedWord)
 {
 	// All is done in constructor member initializer list
 }
