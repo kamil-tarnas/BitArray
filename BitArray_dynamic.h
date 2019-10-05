@@ -1,6 +1,8 @@
 #ifndef BIT_ARRAY_DYNAMIC
 #define BIT_ARRAY_DYNAMIC
 
+#include "BitArrayElemRefHelper_dynamic.h"
+
 /*
  * This must be done in run-time if we want to decide the size of array at the run-time
  */

@@ -3,6 +3,7 @@
 
 //This can be befiriended with the main BitArray class
 //Proxy class for returning references to elements in BitArray class instances
+// TODO: Make a template that could cover dynamic version of EleRefHelper
 template<unsigned sizeOfArray, unsigned sizeOfElement>
 class BitArrayElemRefHelper
 {
@@ -59,7 +60,7 @@ class BitArrayElemRefHelper
     BitArrayElemRefHelper(unsigned assignment);
     /*
      * = operator shall be defined for this class, it will be used when assigning through the
-     * proxy object to undarlying storage in the main BitArray class
+     * proxy object to underlying storage in the main BitArray class
      */
 
     // Another constructor, which most preferably should be called only from BitArray class
