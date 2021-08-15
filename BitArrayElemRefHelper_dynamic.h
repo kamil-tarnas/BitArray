@@ -22,10 +22,11 @@ namespace dynamic
 	};
 
 	//Can be defined inside class definition
-	BitArrayElemRefHelper::operator=(unsigned assignment)
+	BitArrayElemRefHelper& BitArrayElemRefHelper::operator=(unsigned assignment)
 	{
 		//How to get the information about sizeOfElement and sizeOfArray?
 		//Can this be get from the _dynamic instantiation of BitArray
+		return *this;
 	}
 }
 

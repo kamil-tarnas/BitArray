@@ -208,6 +208,8 @@ operator=(unsigned assignment)
 	// Make bitwise "or" operation to merge bits of value moved to the right place
 	// with the rest of bits of word, that won't be modified
 	refWord |= assignment;
+
+	return *this;
 }
 
 
